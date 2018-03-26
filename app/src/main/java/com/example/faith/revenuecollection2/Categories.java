@@ -17,8 +17,10 @@ import android.widget.TextView;
 public class Categories extends AppCompatActivity {
 
     ListView listView;
-    String [] names = {"My Account","Parking","Rent","Land"};
-    int [] images = {R.drawable.ic_action_account,R.drawable.ic_action_parking,R.drawable.ic_action_rent,R.drawable.land};
+    String [] names = {"My Account","Parking","Rent","Land","Market"};
+    int [] images = {R.drawable.ic_action_account,R.drawable.ic_action_parking,
+            R.drawable.ic_action_rent,R.drawable.land, R.drawable.market};
+
     String token;
 
     @Override
@@ -36,11 +38,16 @@ public class Categories extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i==1){
+                if (i==0){
+                    Intent intent = new Intent(Categories.this,Account.class);
+                    intent.putExtra("token",token);
+                    startActivity(intent);
+                }else if (i==1){
                     Intent intent = new Intent(Categories.this,Parking.class);
                     intent.putExtra("token",token);
                     startActivity(intent);
                 }
+
             }
         });
     }

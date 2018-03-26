@@ -109,6 +109,7 @@ public class Parking extends AppCompatActivity {
 
         final EditText etRegNumber = (EditText)dialog.findViewById(R.id.etRegNumber);
         Button btnAdd = (Button)dialog.findViewById(R.id.btnAdd);
+        final Button btnCancel = (Button)dialog.findViewById(R.id.btnCancel);
 
         etRegNumber.setFilters(filter);
 
@@ -140,6 +141,12 @@ public class Parking extends AppCompatActivity {
                     }
                 }
 
+            }
+        });
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
             }
         });
 

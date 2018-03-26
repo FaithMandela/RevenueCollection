@@ -1,12 +1,14 @@
 package com.example.faith.revenuecollection2.adapters;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.faith.revenuecollection2.MainActivity;
 import com.example.faith.revenuecollection2.Parking;
@@ -20,6 +22,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
@@ -89,9 +92,26 @@ public class VehiclesAdapter extends BaseAdapter {
                     Log.e("TestREGID",id_number);
                     //Pay parking for specific vehicle
                     String new_url = MainActivity.url +"?view=265:0&operation=0";
-                    pay_parking(new_url,token,jsonArray.toString());
+                    String result = pay_parking(new_url,token,jsonArray.toString());
+
+                    JSONObject jsonObject = new JSONObject(result);
+                    String resultCode = jsonObject.getString("ResultCode");
+
+
+                    if (resultCode.equals("0")){
+                        SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(context,SweetAlertDialog.WARNING_TYPE);
+                        sweetAlertDialog.setTitleText("Insufficient account balace.");
+                        sweetAlertDialog.setContentText("Please top up your account and try again");
+                        sweetAlertDialog.show();
+                    }else {
+                        SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(context,SweetAlertDialog.SUCCESS_TYPE);
+                        sweetAlertDialog.setContentText("Parking paid successfully");
+                        sweetAlertDialog.show();
+                    }
 
                 } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e){
                     e.printStackTrace();
                 }
 
@@ -102,7 +122,7 @@ public class VehiclesAdapter extends BaseAdapter {
         return view;
     }
 
-    public void pay_parking(String url, String token, String json){
+    public String pay_parking(String url, String token, String json) throws IOException {
         okHttpClient = new OkHttpClient();
 
         RequestBody requestBody = RequestBody.create(MainActivity.JSON,json);
@@ -114,28 +134,17 @@ public class VehiclesAdapter extends BaseAdapter {
                 .addHeader("content-type", "application/json")
                 .build();
 
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e("IOError",e.toString());
-            }
+        Response response = okHttpClient.newCall(request).execute();
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try(ResponseBody responseBody = response.body()){
-                    if (!response.isSuccessful())throw new IOException("Unexpected code " + response);
-                    Headers responseHeaders = response.headers();
+        String respo = response.body().string();
 
-                    Log.e("Returned","TEST"+String.valueOf(responseHeaders.size()));
-                    for (int i = 0, size = responseHeaders.size(); i < size; i++) {
-                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                    }
-                    String respo = responseBody.string();
-                    System.out.println("BASE1020 "+respo);
+        System.out.println("BASE1020 "+respo);
 
+        return respo;
+    }
 
-                }
-            }
-        });
+    public void showDialog(Context context){
+        SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(context,SweetAlertDialog.WARNING_TYPE);
+        sweetAlertDialog.show();
     }
 }

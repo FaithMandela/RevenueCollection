@@ -22,7 +22,13 @@
         </activity>
         <activity android:name=".Registration" />
         <activity android:name=".Categories" />
-        <activity android:name=".Parking"></activity>
+        <activity android:name=".Parking" />
+        <activity
+            android:name=".AboutUs"
+            android:label="@string/title_activity_about_us"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Account" />
+        <activity android:name=".Main2Activity"></activity>
     </application>
 
 </manifest>
